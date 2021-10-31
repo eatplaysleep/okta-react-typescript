@@ -13,25 +13,30 @@
  * @format
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css';
+import { LoginCallback } from '@okta/okta-react';
+import { Home, Profile } from '../components';
 
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import './styles/index.css';
+type Route = {
+	path: string;
+	isSecure?: boolean;
+	isExact?: boolean;
+	component: any;
+};
 
-ReactDOM.render(
-	<React.StrictMode>
-		<Router>
-			<App />
-		</Router>
-	</React.StrictMode>,
-	document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+export const routes: Route[] = [
+	{
+		path: '/login/callback',
+		component: LoginCallback,
+		isExact: true,
+	},
+	{
+		path: '/profile',
+		component: Profile,
+		isSecure: true,
+		isExact: true,
+	},
+	{
+		path: '/*',
+		component: Home,
+	},
+];
