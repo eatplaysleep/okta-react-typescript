@@ -66,6 +66,12 @@ export const NavBar = ({
 						<Link to='/'>Okta-React Sample Project</Link>
 					</Menu.Item>
 					{authState?.isAuthenticated && (
+						<Menu.Item id='messages-button'>
+							<Icon name='mail outline' />
+							<Link to='/messages'>Messages</Link>
+						</Menu.Item>
+					)}
+					{authState?.isAuthenticated && (
 						<Menu.Item id='profile-button'>
 							<Link to='/profile'>Profile</Link>
 						</Menu.Item>

@@ -16,13 +16,14 @@
 import { useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security, SecureRoute } from '@okta/okta-react';
+import { LoginCallback, Security, SecureRoute } from '@okta/okta-react';
 import { Container } from 'semantic-ui-react';
 import { CorsErrorModal, NavBar } from './components';
-import { authConfig, routes } from './config';
+import { authConfig } from './config';
+import { Home, Messages, Profile } from './components';
 import './styles/App.css';
 
-const oktaAuth = new OktaAuth(authConfig.oidc);
+const oktaAuth = new OktaAuth(authConfig);
 
 // oktaAuth.start();
 
@@ -35,36 +36,25 @@ const App = () => {
 	) => {
 		history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
 	};
-	console.log(routes);
+	const customAuthHandler = () => {
+		history.push('/');
+	};
 	const [corsErrorModalOpen, setCorsErrorModalOpen] = useState<boolean>(false);
 	return (
-		<Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+		<Security
+			oktaAuth={oktaAuth}
+			restoreOriginalUri={restoreOriginalUri}
+			onAuthRequired={customAuthHandler}
+		>
 			<NavBar {...{ setCorsErrorModalOpen }} />
 			<CorsErrorModal {...{ corsErrorModalOpen, setCorsErrorModalOpen }} />
 			<Container text style={{ marginTop: '7em' }}>
 				<div>
 					<Switch>
-						{routes.map(route => {
-							if (route?.isSecure) {
-								return (
-									<SecureRoute
-										key={route.path}
-										path={route.path}
-										exact={route?.isExact ?? false}
-										component={route.component}
-									/>
-								);
-							} else {
-								return (
-									<Route
-										key={route.path}
-										path={route.path}
-										exact={route?.isExact ?? false}
-										component={route.component}
-									/>
-								);
-							}
-						})}
+						<Route path='/login/callback' exact component={LoginCallback} />
+						<SecureRoute path='/messages' component={Messages} />
+						<SecureRoute path='/profile' component={Profile} />
+						<Route path='*' component={Home} />
 					</Switch>
 				</div>
 			</Container>
