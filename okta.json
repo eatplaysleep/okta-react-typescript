@@ -1,7 +1,7 @@
 {
 	"name": "okta-react-typescript-hosted-login",
 	"description": "A near exact replica of the `okta-hosted-login` React sample found in the `@okta/okta-react` repo",
-	"url": "https://demo-typescript-react.atko.rocks",
+	"url": "https://demo-typescript-react-app.atko.rocks",
 	"logo": "https://developer.okta.com/logo.png",
 	"categories": ["authentication", "authorization", "mfa", "api-authentication"]
 }
