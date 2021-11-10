@@ -24,9 +24,11 @@ import './styles/index.css';
 
 ReactDOM.render(
 	<React.StrictMode>
-		<Router>
-			<App />
-		</Router>
+		<React.Suspense fallback={<div>Loading...</div>}>
+			<Router>
+				<App />
+			</Router>
+		</React.Suspense>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

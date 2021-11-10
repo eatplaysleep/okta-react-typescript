@@ -25,7 +25,7 @@ export const CorsErrorModal = ({
 	setCorsErrorModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
 	// Build URL to "Trusted Origins" page in Admin panel
-	const { issuer } = authConfig.oidc;
+	const { issuer } = authConfig;
 	const baseUrl: string = issuer.split('/oauth2')[0];
 	const hostParts: string[] = new URL(baseUrl).host.split('.');
 	hostParts[0] += '-admin';
