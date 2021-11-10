@@ -37,6 +37,8 @@ const CLIENT_ID = process.env.REACT_APP_OKTA_CLIENT_ID ?? '';
 const AUTH_SERVER_ID = process.env.REACT_APP_OKTA_AUTH_SERVER_ID ?? 'default';
 const OKTA_URL = process.env.REACT_APP_OKTA_URL ?? '';
 const ISSUER = `${OKTA_URL}/oauth2/${AUTH_SERVER_ID}`;
+const MESSAGES_URL =
+	process.env.REACT_APP_MESSAGES_URL ?? 'http://localhost:8000/api/messages';
 
 export const authConfig: AuthConfig = {
 	clientId: CLIENT_ID,
@@ -51,5 +53,5 @@ export const authConfig: AuthConfig = {
 };
 
 export const messageConfig: MessageConfig = {
-	messagesUrl: 'http://localhost:8000/api/messages',
+	messagesUrl: MESSAGES_URL,
 };
