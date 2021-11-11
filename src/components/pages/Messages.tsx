@@ -98,9 +98,8 @@ export const Messages = () => {
 			{messages && (
 				<div>
 					<p>
-						This component makes a GET request to the resource server example,
-						which must be running at
-						<code>localhost:8000/api/messages</code>
+						This component makes a GET request to the resource server running on
+						the configured URL in your <code>.env</code> file.
 					</p>
 					<p>
 						It attaches your current access token in the{' '}

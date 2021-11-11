@@ -91,8 +91,14 @@ export const Home = () => {
 						</p>
 						<p>
 							This sample is designed to work with one of our resource server
-							examples. To see access token authentication in action, please
-							download one of these resource server examples:
+							examples. The demo version hosted{' '}
+							<a href='https://demo-typescript-react-app.atko.rocks'>here</a>{' '}
+							has it's own hosted resource server where you can see access token
+							authentication in action.
+						</p>
+						<p>
+							For your own development, please download one of these resource
+							server examples:
 						</p>
 						<ul>
 							{resourceServerExamples.map(example => (
