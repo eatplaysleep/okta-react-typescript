@@ -66,10 +66,11 @@ export const Profile = () => {
 		<div>
 			<div>
 				<Header as='h1'>
-					<Icon name='drivers license' /> My User Profile (ID Token Claims){' '}
+					<Icon name='drivers license' /> My User Profile (Token Claims){' '}
 				</Header>
 				<p>
-					Below is the information from your ID token which was obtained during the &nbsp;
+					Below is the information from calling /userinfo as well as parsing the Access Token, which was obtained during
+					the &nbsp;
 					<a href='https://developer.okta.com/docs/guides/implement-auth-code-pkce'>PKCE Flow</a> and is now stored in
 					local storage.
 				</p>
@@ -101,7 +102,11 @@ export const Profile = () => {
 											<tr key={claimName}>
 												<td>{claimName}</td>
 												<td id={claimId}>
-													{typeof claimValue === 'object' ? JSON.stringify(claimValue, null, 2) : claimValue.toString()}
+													{typeof claimValue === 'object' ? (
+														<pre>{JSON.stringify(claimValue, null, 2)}</pre>
+													) : (
+														claimValue.toString()
+													)}
 												</td>
 											</tr>
 										);
@@ -136,9 +141,11 @@ export const Profile = () => {
 												<tr key={claimName}>
 													<td>{claimName}</td>
 													<td id={claimId}>
-														{typeof claimValue === 'object'
-															? JSON.stringify(claimValue, null, 2)
-															: claimValue.toString()}
+														{typeof claimValue === 'object' ? (
+															<pre>{JSON.stringify(claimValue, null, 2)}</pre>
+														) : (
+															claimValue.toString()
+														)}
 													</td>
 												</tr>
 											);
