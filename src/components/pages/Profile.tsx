@@ -30,6 +30,7 @@ export const Profile = () => {
 			oktaAuth
 				.getUser()
 				.then((info) => {
+					console.log(JSON.stringify(info, null, 2));
 					setUserInfo(info);
 				})
 				.catch((err) => {
