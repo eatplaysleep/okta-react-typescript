@@ -21,7 +21,7 @@ import { Accordion, AccordionTitleProps, Header, Icon, Table } from 'semantic-ui
 export const Profile = () => {
 	const { authState, oktaAuth } = useOktaAuth();
 	const [userInfo, setUserInfo] = useState<UserClaims | null>(null);
-	const [accessToken, setAccessToken] = useState<JWTObject | null>(null);
+	const [atClaims, setAtClaims] = useState<UserClaims | null>(null);
 	const [activeIndex, setActiveIndex] = useState<number>(0);
 
 	const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, titleProps: AccordionTitleProps) => {
@@ -46,7 +46,11 @@ export const Profile = () => {
 					console.error(err);
 				});
 
-			setAccessToken(() => decodeToken(oktaAuth.getAccessToken() as string));
+			setAtClaims(() => {
+				const { payload } = decodeToken(oktaAuth.getAccessToken() as string) || {};
+
+				return payload;
+			});
 		}
 	}, [authState, oktaAuth]); // Update if authState changes
 
@@ -73,7 +77,7 @@ export const Profile = () => {
 					This route is protected with the <code>&lt;SecureRoute&gt;</code> component, which will ensure that this page
 					cannot be accessed until you have authenticated.
 				</p>
-				<Accordion styled>
+				<Accordion styled fluid>
 					<Accordion.Title active={activeIndex === 0} index={0} onClick={handleClick}>
 						<Icon name='dropdown' />
 						/userinfo
@@ -121,8 +125,8 @@ export const Profile = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{accessToken &&
-									Object.entries(accessToken).map((claimEntry) => {
+								{atClaims &&
+									Object.entries(atClaims).map((claimEntry) => {
 										const claimName = claimEntry[0];
 										const claimValue = claimEntry[1];
 										const claimId = `claim-${claimName}`;
