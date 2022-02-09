@@ -13,16 +13,25 @@
  * @format
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
-import { UserClaims } from '@okta/okta-auth-js';
-import { Header, Icon, Table } from 'semantic-ui-react';
+import { JWTObject, UserClaims } from '@okta/okta-auth-js';
+import { Accordion, AccordionTitleProps, Header, Icon, Table } from 'semantic-ui-react';
 
 export const Profile = () => {
 	const { authState, oktaAuth } = useOktaAuth();
 	const [userInfo, setUserInfo] = useState<UserClaims | null>(null);
+	const [accessToken, setAccessToken] = useState<JWTObject | null>(null);
+	const [activeIndex, setActiveIndex] = useState<number>(0);
 
+	const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, titleProps: AccordionTitleProps) => {
+		const { index } = titleProps;
+
+		setActiveIndex(() => (activeIndex === index ? -1 : (index as number)));
+	};
 	useEffect(() => {
+		const decodeToken = (token: string): JWTObject => oktaAuth.token.decode(token);
+
 		if (!authState || !authState.isAuthenticated) {
 			// When user isn't authenticated, forget any user info
 			setUserInfo(null);
@@ -36,6 +45,8 @@ export const Profile = () => {
 				.catch((err) => {
 					console.error(err);
 				});
+
+			setAccessToken(() => decodeToken(oktaAuth.getAccessToken() as string));
 		}
 	}, [authState, oktaAuth]); // Update if authState changes
 
@@ -62,29 +73,79 @@ export const Profile = () => {
 					This route is protected with the <code>&lt;SecureRoute&gt;</code> component, which will ensure that this page
 					cannot be accessed until you have authenticated.
 				</p>
-				<Table>
-					<thead>
-						<tr>
-							<th>Claim</th>
-							<th>Value</th>
-						</tr>
-					</thead>
-					<tbody>
-						{Object.entries(userInfo).map((claimEntry) => {
-							const claimName = claimEntry[0];
-							const claimValue = claimEntry[1];
-							const claimId = `claim-${claimName}`;
-							return (
-								<tr key={claimName}>
-									<td>{claimName}</td>
-									<td id={claimId}>
-										{typeof claimValue === 'object' ? JSON.stringify(claimValue, null, 2) : claimValue.toString()}
-									</td>
+				<Accordion styled>
+					<Accordion.Title active={activeIndex === 0} index={0} onClick={handleClick}>
+						<Icon name='dropdown' />
+						/userinfo
+					</Accordion.Title>
+					<Accordion.Content active={activeIndex === 0}>
+						<Table>
+							<thead>
+								<tr>
+									<th>Claim</th>
+									<th>Value</th>
 								</tr>
-							);
-						})}
-					</tbody>
-				</Table>
+							</thead>
+							<tbody>
+								{Object.entries(userInfo).map((claimEntry) => {
+									const claimName = claimEntry[0];
+									const claimValue = claimEntry[1];
+									const claimId = `claim-${claimName}`;
+									let result: any = [];
+									if (claimName !== 'headers') {
+										result = (
+											<tr key={claimName}>
+												<td>{claimName}</td>
+												<td id={claimId}>
+													{typeof claimValue === 'object' ? JSON.stringify(claimValue, null, 2) : claimValue.toString()}
+												</td>
+											</tr>
+										);
+									}
+
+									return result;
+								})}
+							</tbody>
+						</Table>
+					</Accordion.Content>
+					<Accordion.Title active={activeIndex === 1} index={1} onClick={handleClick}>
+						<Icon name='dropdown' />
+						Access Token
+					</Accordion.Title>
+					<Accordion.Content active={activeIndex === 1}>
+						<Table>
+							<thead>
+								<tr>
+									<th>Claim</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								{accessToken &&
+									Object.entries(accessToken).map((claimEntry) => {
+										const claimName = claimEntry[0];
+										const claimValue = claimEntry[1];
+										const claimId = `claim-${claimName}`;
+										let result: any = [];
+										if (claimName !== 'headers') {
+											result = (
+												<tr key={claimName}>
+													<td>{claimName}</td>
+													<td id={claimId}>
+														{typeof claimValue === 'object'
+															? JSON.stringify(claimValue, null, 2)
+															: claimValue.toString()}
+													</td>
+												</tr>
+											);
+										}
+
+										return result;
+									})}
+							</tbody>
+						</Table>
+					</Accordion.Content>
+				</Accordion>
 			</div>
 		</div>
 	);
