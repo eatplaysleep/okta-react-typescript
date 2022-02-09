@@ -16,8 +16,10 @@
 import React, { useState, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { JWTObject, UserClaims } from '@okta/okta-auth-js';
-import { Accordion, AccordionTitleProps, Header, Icon, Table } from 'semantic-ui-react';
+import { Accordion, AccordionTitleProps, Header, Icon } from 'semantic-ui-react';
 import JSONPretty from 'react-json-pretty';
+
+import '../../styles/Profile.css';
 import 'react-json-pretty/themes/monikai.css';
 
 interface UserInfo extends UserClaims {
