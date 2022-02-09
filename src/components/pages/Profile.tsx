@@ -17,10 +17,16 @@ import React, { useState, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { JWTObject, UserClaims } from '@okta/okta-auth-js';
 import { Accordion, AccordionTitleProps, Header, Icon, Table } from 'semantic-ui-react';
+import JSONPretty from 'react-json-pretty';
+import 'react-json-pretty/themes/monikai.css';
+
+interface UserInfo extends UserClaims {
+	[key: string]: any;
+}
 
 export const Profile = () => {
 	const { authState, oktaAuth } = useOktaAuth();
-	const [userInfo, setUserInfo] = useState<UserClaims | null>(null);
+	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 	const [atClaims, setAtClaims] = useState<UserClaims | null>(null);
 	const [activeIndex, setActiveIndex] = useState<number>(0);
 
@@ -38,7 +44,11 @@ export const Profile = () => {
 		} else {
 			oktaAuth
 				.getUser()
-				.then((info) => {
+				.then((info: UserInfo) => {
+					if (info?.headers) {
+						delete info.headers;
+					}
+
 					console.log(JSON.stringify(info, null, 2));
 					setUserInfo(info);
 				})
@@ -84,77 +94,14 @@ export const Profile = () => {
 						/userinfo
 					</Accordion.Title>
 					<Accordion.Content active={activeIndex === 0}>
-						<Table>
-							<thead>
-								<tr>
-									<th>Claim</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-							<tbody>
-								{Object.entries(userInfo).map((claimEntry) => {
-									const claimName = claimEntry[0];
-									const claimValue = claimEntry[1];
-									const claimId = `claim-${claimName}`;
-									let result: any = [];
-									if (claimName !== 'headers') {
-										result = (
-											<tr key={claimName}>
-												<td>{claimName}</td>
-												<td id={claimId}>
-													{typeof claimValue === 'object' ? (
-														<pre>{JSON.stringify(claimValue, null, 2)}</pre>
-													) : (
-														claimValue.toString()
-													)}
-												</td>
-											</tr>
-										);
-									}
-
-									return result;
-								})}
-							</tbody>
-						</Table>
+						<JSONPretty id='userinfo' data={userInfo} />
 					</Accordion.Content>
 					<Accordion.Title active={activeIndex === 1} index={1} onClick={handleClick}>
 						<Icon name='dropdown' />
 						Access Token
 					</Accordion.Title>
 					<Accordion.Content active={activeIndex === 1}>
-						<Table>
-							<thead>
-								<tr>
-									<th>Claim</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-							<tbody>
-								{atClaims &&
-									Object.entries(atClaims).map((claimEntry) => {
-										const claimName = claimEntry[0];
-										const claimValue = claimEntry[1];
-										const claimId = `claim-${claimName}`;
-										let result: any = [];
-										if (claimName !== 'headers') {
-											result = (
-												<tr key={claimName}>
-													<td>{claimName}</td>
-													<td id={claimId}>
-														{typeof claimValue === 'object' ? (
-															<pre>{JSON.stringify(claimValue, null, 2)}</pre>
-														) : (
-															claimValue.toString()
-														)}
-													</td>
-												</tr>
-											);
-										}
-
-										return result;
-									})}
-							</tbody>
-						</Table>
+						<JSONPretty id='atClaims' data={atClaims} />
 					</Accordion.Content>
 				</Accordion>
 			</div>
